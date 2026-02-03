@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
+# path2shock_calculation.py
 # This code provides shock calculation from path files to Shock
-# Updates scenario names in group 5
+# Updates json files before running the calculations
+# Requires config.json and groups.json to be set up correctly
 
 import json
 import os
