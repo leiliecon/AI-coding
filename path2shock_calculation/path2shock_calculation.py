@@ -10,10 +10,12 @@ import pandas as pd
 
 # ------------------ Paths ------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_PATH = BASE_DIR + "/path2shock/"
+# All JSON/Excel inputs live here.
+INPUT_DIR = os.path.join(BASE_DIR, "input")
+OUTPUT_PATH = os.path.join(BASE_DIR, "output")
 
-CONFIG_JSON = BASE_DIR + os.sep + "config.json"
-GROUPS_JSON = BASE_DIR + os.sep + "groups.json"
+CONFIG_JSON = os.path.join(INPUT_DIR, "config.json")
+GROUPS_JSON = os.path.join(INPUT_DIR, "groups.json")
 
 
 def _load_config(config_path):
@@ -180,10 +182,12 @@ def run_path2shock(
     scen_end=SCEN_END,
 ):
     mapping = pd.read_excel(
-        BASE_DIR + os.sep + mapping_excel + ".xlsx", sheet_name=MAPPING_SHEET_NAME
+        os.path.join(INPUT_DIR, f"{mapping_excel}.xlsx"),
+        sheet_name=MAPPING_SHEET_NAME,
     )
     path_df = pd.read_excel(
-        BASE_DIR + os.sep + data_excel + ".xlsx", sheet_name=DATA_SHEET_NAME
+        os.path.join(INPUT_DIR, f"{data_excel}.xlsx"),
+        sheet_name=DATA_SHEET_NAME,
     )
     res = mapping.merge(path_df, on="M names", how="left")
     res.columns = [col.replace("Q", ".") for col in res.columns]
