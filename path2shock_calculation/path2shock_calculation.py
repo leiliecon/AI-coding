@@ -243,13 +243,27 @@ def calculate_shocks(df, range_columns):
     _apply_group_max_change(df, range_columns)
     _apply_group_cpi(df)
     _apply_group_rates(df, range_columns)
-    _apply_format_rules(df)
 
 
 def save_scenario_outputs(df, output_path):
     for scen in df["Scenario"].unique():
         res1 = df[df["Scenario"] == scen].copy()
-        res1 = res1[["M names", "Slides name", "shock", "extreme_level"]]
+        res1 = res1[
+            ["M names", "Slides name", "Scenario", "shock", "extreme_level"]
+        ]
+        res1["shock_raw"] = res1["shock"]
+        res1["extreme_level_raw"] = res1["extreme_level"]
+        _apply_format_rules(res1)
+        res1 = res1[
+            [
+                "M names",
+                "Slides name",
+                "shock",
+                "extreme_level",
+                "shock_raw",
+                "extreme_level_raw",
+            ]
+        ]
         res1 = res1[res1["shock"].notna()]
         file_name = f"path2shock_{scen}.xlsx"
         res1.to_excel(output_path + os.sep + file_name, index=False)
