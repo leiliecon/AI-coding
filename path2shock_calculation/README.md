@@ -1,6 +1,6 @@
 # Path2Shock Calculation
 
-This project calculates scenario shocks from path data in Excel files. It merges a mapping table with scenario paths, applies group-specific shock rules, and writes per-scenario outputs to `output/`.
+This project calculates scenario shocks from path data in Excel files. It merges a mapping table with scenario paths, applies group-specific shock rules (plus optional formatting rules), and writes per-scenario outputs to `output/`.
 
 ## What It Does
 Given:
@@ -8,11 +8,13 @@ Given:
 - A path file with scenarios and time series columns
 - JSON config for file/sheet names and scenario ranges
 - JSON group definitions that drive shock logic
+- Optional JSON formatting rules for shock/extreme output text
 
 The script:
-1. Validates inputs and group coverage.
+1. Validates inputs and required columns.
 2. Computes shocks and extreme levels by group rules.
-3. Writes one Excel file per scenario to `output/`.
+3. Applies optional formatting rules.
+4. Writes one Excel file per scenario to `output/`.
 
 ## Requirements
 - Python 3.9+ recommended
@@ -64,6 +66,33 @@ Groups:
 - `group_cpi`: shock = min quarterly YoY CPI change; extreme = max quarterly YoY CPI change
 - `group_rates`: shock depends on scenario direction (up uses max change, others use min change)
 
+### `input/format_rules.json` (optional)
+Allows formatting and labeling of `shock` and `extreme_level` outputs. If the file is missing, no formatting is applied.
+
+Minimal example:
+```json
+{
+  "format_rules": {
+    "default": {
+      "shock_format": "percent",
+      "extreme_format": "percent"
+    }
+  }
+}
+```
+
+Supported fields (per `M names` key or `default`):
+- `shock_format`: `percent`, `percent_compact`, `percent_compact_raw`
+- `shock_suffix`: string appended to shock
+- `extreme_format`: `percent`, `ppts`, `ppts_signed`, `bps`, `bps_signed`
+- `extreme_wrap`: `parens`
+
+Scenario-specific overrides (apply only to `group_rates_up_scenarios` vs others):
+- `shock_format_up`, `shock_format_other`
+- `shock_suffix_up`, `shock_suffix_other`
+- `extreme_format_up`, `extreme_format_other`
+- `extreme_wrap_up`, `extreme_wrap_other`
+
 ### Excel Inputs
 Mapping file (e.g., `input/mapping.xlsx`) must contain:
 - `M names`
@@ -87,6 +116,5 @@ Outputs are written to `output/` as:
 - `path2shock_<Scenario>.xlsx`
 
 ## Notes
-- The script validates that every `M name` is assigned to exactly one group.
-- If any group contains names not found in the data, a warning is emitted.
-- If any data rows are missing group assignments, it raises a `ValueError`.
+- The script validates that no `M name` appears in more than one group.
+- Group coverage is not enforced; names can be missing from groups without warnings.
