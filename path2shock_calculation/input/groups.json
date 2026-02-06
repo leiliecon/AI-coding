@@ -1,7 +1,7 @@
 {
-  "group_min_percent": ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M24", "M26", "M27", "M28", "M29", "M30"],
+  "group_min_percent": ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M24"],
   "group_max_percent": ["M10"],
-  "group_max_change": ["M11", "M12", "M13",  "M15", "M16", "M17", "M18", "M19", "M14"],
+  "group_max_change": ["M11", "M12", "M13",  "M14"],
   "group_cpi": ["M20"],
   "group_rates": ["M21", "M22", "M23", "M25"]
 }

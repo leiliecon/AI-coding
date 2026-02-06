@@ -3,7 +3,7 @@
   "data_excel": "path",
   "mapping_sheet_name": "Sheet1",
   "data_sheet_name": "Sheet1",
-  "group_rates_up_scenarios": ["Up"],
+  "group_rates_up_scenarios": ["Up", "Base"],
   "T0": "2025.4",
   "scen_start": "2026.1",
   "scen_end": "2029.1"

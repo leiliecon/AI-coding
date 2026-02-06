@@ -1,0 +1,106 @@
+{
+  "format_rules": {
+    "M1": {
+      "shock_format": "percent"
+    },
+    "M2": {
+      "shock_format": "percent"
+    },
+    "M3": {
+      "shock_format": "percent"
+    },
+    "M4": {
+      "shock_format": "percent"
+    },
+    "M5": {
+      "shock_format": "percent"
+    },
+    "M6": {
+      "shock_format": "percent"
+    },
+    "M7": {
+      "shock_format": "percent"
+    },
+    "M8": {
+      "shock_format": "percent"
+    },
+    "M9": {
+      "shock_format": "percent"
+    },
+    "M10": {
+      "shock_format": "percent"
+    },
+    "M24": {
+      "shock_format": "percent"
+    },
+    "M25": {
+      "shock_format": "percent"
+    },
+    "M11": {
+      "shock_suffix": "% max",
+      "extreme_format": "ppts_signed",
+      "extreme_wrap": "parens"
+    },
+    "M12": {
+      "shock_suffix": " peak",
+      "extreme_format": "ppts_signed",
+      "extreme_wrap": "parens"
+    },
+    "M13": {
+      "shock_format": "percent_compact_raw",
+      "shock_suffix": " peak",
+      "extreme_format": "bps_signed",
+      "extreme_wrap": "parens"
+    },
+    "M14": {
+      "shock_format": "percent_compact_raw",
+      "shock_suffix": " peak",
+      "extreme_format": "bps_signed",
+      "extreme_wrap": "parens"
+    },
+    "M20": {
+      "shock_format": "percent",
+      "extreme_format": "percent"
+    },
+    "M21": {
+      "shock_format_up": "percent_compact_raw",
+      "shock_suffix_up": " peak",
+      "extreme_format_up": "bps_signed",
+      "extreme_wrap_up": "parens",
+      "shock_format_other": "percent_compact_raw",
+      "shock_suffix_other": " trough",
+      "extreme_format_other": "bps",
+      "extreme_wrap_other": "parens"
+    },
+    "M22": {
+      "shock_format_up": "percent_compact_raw",
+      "shock_suffix_up": " peak",
+      "extreme_format_up": "bps_signed",
+      "extreme_wrap_up": "parens",
+      "shock_format_other": "percent_compact_raw",
+      "shock_suffix_other": " trough",
+      "extreme_format_other": "bps",
+      "extreme_wrap_other": "parens"
+    },
+    "M23": {
+      "shock_format_up": "percent_compact_raw",
+      "shock_suffix_up": " peak",
+      "extreme_format_up": "bps_signed",
+      "extreme_wrap_up": "parens",
+      "shock_format_other": "percent_compact_raw",
+      "shock_suffix_other": " trough",
+      "extreme_format_other": "bps",
+      "extreme_wrap_other": "parens"
+    },
+    "M25": {
+      "shock_format_up": "percent_compact_raw",
+      "shock_suffix_up": " peak",
+      "extreme_format_up": "bps_signed",
+      "extreme_wrap_up": "parens",
+      "shock_format_other": "percent_compact_raw",
+      "shock_suffix_other": " trough",
+      "extreme_format_other": "bps",
+      "extreme_wrap_other": "parens"
+    }
+  }
+}
