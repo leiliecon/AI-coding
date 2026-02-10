@@ -93,6 +93,10 @@ def _format_extreme_level(value, fmt):
         return f"{value} ppts"
     if fmt == "percent" and pd.notna(value):
         return f"{round(value * 100, 1)} %"
+    if fmt == "percent_compact" and pd.notna(value):
+        return f"{round(value * 100, 1)}%"
+    if fmt == "percent_compact_raw" and pd.notna(value):
+        return f"{float(value):.1f}"
     if fmt == "bps_signed" and pd.notna(value):
         bps_value = value * 100
         bps_text = f"{bps_value:.0f}"
@@ -129,6 +133,8 @@ def _apply_format_rules(df):
     default_rule = FORMAT_RULES.get("default", {})
     def _apply_rule(mask, rule):
         shock_suffix = rule.get("shock_suffix", "")
+        shock_wrap = rule.get("shock_wrap", "")
+        extreme_suffix = rule.get("extreme_suffix", "")
         shock_format = rule.get("shock_format", "")
         extreme_format = rule.get("extreme_format", "")
         extreme_wrap = rule.get("extreme_wrap", "")
@@ -138,22 +144,32 @@ def _apply_format_rules(df):
                 df.loc[mask, "shock"] = shock_vals.map(
                     lambda v: f"{round(v * 100, 1)} %" if pd.notna(v) else v
                 )
-            if shock_format == "percent_compact":
+            elif shock_format == "percent_compact":
                 df.loc[mask, "shock"] = shock_vals.map(
                     lambda v: f"{round(v * 100, 1)}%" if pd.notna(v) else v
                 )
-            if shock_format == "percent_compact_raw":
+            elif shock_format == "percent_compact_raw":
                 df.loc[mask, "shock"] = shock_vals.map(
                     lambda v: f"{round(v, 1)}%" if pd.notna(v) else v
                 )
+            elif shock_format in {"ppts", "ppts_signed", "bps", "bps_signed"}:
+                df.loc[mask, "shock"] = shock_vals.map(
+                    lambda v: _format_extreme_level(v, shock_format)
+                )
         if shock_suffix:
             df.loc[mask, "shock"] = df.loc[mask, "shock"].astype(str) + shock_suffix
+        if shock_wrap == "parens":
+            df.loc[mask, "shock"] = df.loc[mask, "shock"].map(
+                lambda v: f"({v})" if pd.notna(v) else v
+            )
         if extreme_format or extreme_wrap:
             extreme = df.loc[mask, "extreme_level"]
             if extreme_format:
                 extreme = extreme.map(
                     lambda v: _format_extreme_level(v, extreme_format)
                 )
+            if extreme_suffix:
+                extreme = extreme.astype(str) + extreme_suffix
             if extreme_wrap == "parens":
                 extreme = extreme.map(lambda v: f"({v})" if pd.notna(v) else v)
             df.loc[mask, "extreme_level"] = extreme
@@ -166,8 +182,12 @@ def _apply_format_rules(df):
         shock_format_other = rule.get("shock_format_other")
         shock_suffix_up = rule.get("shock_suffix_up")
         shock_suffix_other = rule.get("shock_suffix_other")
+        shock_wrap_up = rule.get("shock_wrap_up")
+        shock_wrap_other = rule.get("shock_wrap_other")
         extreme_format_up = rule.get("extreme_format_up")
         extreme_format_other = rule.get("extreme_format_other")
+        extreme_suffix_up = rule.get("extreme_suffix_up")
+        extreme_suffix_other = rule.get("extreme_suffix_other")
         extreme_wrap_up = rule.get("extreme_wrap_up")
         extreme_wrap_other = rule.get("extreme_wrap_other")
 
@@ -177,8 +197,12 @@ def _apply_format_rules(df):
                 shock_format_other,
                 shock_suffix_up,
                 shock_suffix_other,
+                shock_wrap_up,
+                shock_wrap_other,
                 extreme_format_up,
                 extreme_format_other,
+                extreme_suffix_up,
+                extreme_suffix_other,
                 extreme_wrap_up,
                 extreme_wrap_other,
             ]
@@ -190,7 +214,9 @@ def _apply_format_rules(df):
                 {
                     "shock_format": shock_format_up,
                     "shock_suffix": shock_suffix_up,
+                    "shock_wrap": shock_wrap_up,
                     "extreme_format": extreme_format_up,
+                    "extreme_suffix": extreme_suffix_up,
                     "extreme_wrap": extreme_wrap_up,
                 },
             )
@@ -199,7 +225,9 @@ def _apply_format_rules(df):
                 {
                     "shock_format": shock_format_other,
                     "shock_suffix": shock_suffix_other,
+                    "shock_wrap": shock_wrap_other,
                     "extreme_format": extreme_format_other,
+                    "extreme_suffix": extreme_suffix_other,
                     "extreme_wrap": extreme_wrap_other,
                 },
             )

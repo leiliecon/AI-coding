@@ -1,0 +1,19 @@
+{
+  "scenario_aliases": {
+    "baseline": "base",
+    "upside": "up",
+    "downside": "down"
+  },
+  "default_fill_mode": "single_shock",
+  "m_fill_modes": {
+    "M11": "two_row_extreme_then_shock",
+    "M12": "two_row_extreme_then_shock",
+    "M13": "two_row_extreme_then_shock",
+    "M14": "two_row_extreme_then_shock",
+    "M20": "range_extreme_to_shock",
+    "M21": "two_row_extreme_then_shock",
+    "M22": "two_row_extreme_then_shock",
+    "M23": "two_row_extreme_then_shock",
+    "M25": "two_row_extreme_then_shock"
+  }
+}

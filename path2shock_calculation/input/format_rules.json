@@ -33,74 +33,73 @@
     "M24": {
       "shock_format": "percent"
     },
-    "M25": {
-      "shock_format": "percent"
-    },
     "M11": {
-      "shock_suffix": "% max",
-      "extreme_format": "ppts_signed",
-      "extreme_wrap": "parens"
+      "shock_format": "ppts_signed",
+      "shock_wrap": "parens",
+      "extreme_format": "percent_compact_raw",
+      "extreme_suffix": "% max"
     },
     "M12": {
-      "shock_suffix": " peak",
-      "extreme_format": "ppts_signed",
-      "extreme_wrap": "parens"
+      "shock_format": "ppts_signed",
+      "shock_wrap": "parens",
+      "extreme_format": "percent_compact_raw",
+      "extreme_suffix": " peak"
     },
     "M13": {
-      "shock_format": "percent_compact_raw",
-      "shock_suffix": " peak",
-      "extreme_format": "bps_signed",
-      "extreme_wrap": "parens"
+      "shock_format": "bps_signed",
+      "shock_wrap": "parens",
+      "extreme_format": "percent_compact_raw",
+      "extreme_suffix": " peak"
     },
     "M14": {
-      "shock_format": "percent_compact_raw",
-      "shock_suffix": " peak",
-      "extreme_format": "bps_signed",
-      "extreme_wrap": "parens"
+      "shock_format": "bps_signed",
+      "shock_wrap": "parens",
+      "extreme_format": "percent_compact_raw",
+      "extreme_suffix": " peak"
     },
     "M20": {
       "shock_format": "percent",
       "extreme_format": "percent"
     },
     "M21": {
-      "shock_format_up": "percent_compact_raw",
-      "shock_suffix_up": " peak",
-      "extreme_format_up": "bps_signed",
-      "extreme_wrap_up": "parens",
-      "shock_format_other": "percent_compact_raw",
-      "shock_suffix_other": " trough",
-      "extreme_format_other": "bps",
-      "extreme_wrap_other": "parens"
+      "shock_format_up": "bps_signed",
+      "shock_wrap_up": "parens",
+      "extreme_format_up": "percent_compact_raw",
+      "extreme_suffix_up": " peak",
+      "shock_format_other": "bps",
+      "shock_wrap_other": "parens",
+      "extreme_format_other": "percent_compact_raw",
+      "extreme_suffix_other": " trough"
     },
     "M22": {
-      "shock_format_up": "percent_compact_raw",
-      "shock_suffix_up": " peak",
-      "extreme_format_up": "bps_signed",
-      "extreme_wrap_up": "parens",
-      "shock_format_other": "percent_compact_raw",
-      "shock_suffix_other": " trough",
-      "extreme_format_other": "bps",
-      "extreme_wrap_other": "parens"
+      "shock_format_up": "bps_signed",
+      "shock_wrap_up": "parens",
+      "extreme_format_up": "percent_compact_raw",
+      "extreme_suffix_up": " peak",
+      "shock_format_other": "bps",
+      "shock_wrap_other": "parens",
+      "extreme_format_other": "percent_compact_raw",
+      "extreme_suffix_other": " trough"
     },
     "M23": {
-      "shock_format_up": "percent_compact_raw",
-      "shock_suffix_up": " peak",
-      "extreme_format_up": "bps_signed",
-      "extreme_wrap_up": "parens",
-      "shock_format_other": "percent_compact_raw",
-      "shock_suffix_other": " trough",
-      "extreme_format_other": "bps",
-      "extreme_wrap_other": "parens"
+      "shock_format_up": "bps_signed",
+      "shock_wrap_up": "parens",
+      "extreme_format_up": "percent_compact_raw",
+      "extreme_suffix_up": " peak",
+      "shock_format_other": "bps",
+      "shock_wrap_other": "parens",
+      "extreme_format_other": "percent_compact_raw",
+      "extreme_suffix_other": " trough"
     },
     "M25": {
-      "shock_format_up": "percent_compact_raw",
-      "shock_suffix_up": " peak",
-      "extreme_format_up": "bps_signed",
-      "extreme_wrap_up": "parens",
-      "shock_format_other": "percent_compact_raw",
-      "shock_suffix_other": " trough",
-      "extreme_format_other": "bps",
-      "extreme_wrap_other": "parens"
+      "shock_format_up": "bps_signed",
+      "shock_wrap_up": "parens",
+      "extreme_format_up": "percent_compact_raw",
+      "extreme_suffix_up": " peak",
+      "shock_format_other": "bps",
+      "shock_wrap_other": "parens",
+      "extreme_format_other": "percent_compact_raw",
+      "extreme_suffix_other": " trough"
     }
   }
 }
