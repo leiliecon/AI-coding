@@ -40,9 +40,9 @@
       "extreme_suffix": "% max"
     },
     "M12": {
-      "shock_format": "ppts_signed",
+      "shock_format": "ppts_signed2",
       "shock_wrap": "parens",
-      "extreme_format": "percent_compact_raw",
+      "extreme_format": "percent_compact_raw2",
       "extreme_suffix": " peak"
     },
     "M13": {

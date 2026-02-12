@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment, Font
 
 BASE_DIR = Path(__file__).resolve().parent
 INPUT_DIR = BASE_DIR / "input"
@@ -226,10 +226,12 @@ def export_path2shock_table(
                     ws.cell(row=row_idx, column=col_idx, value=shock_val)
 
     center_alignment = Alignment(horizontal="center", vertical="center")
+    final_font = Font(name="Inter", size=11, color="FF002060")
     for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
         for cell in row:
             if cell.value is not None and str(cell.value).strip() != "":
                 cell.alignment = center_alignment
+                cell.font = final_font
 
     wb.save(output_file)
     return output_file

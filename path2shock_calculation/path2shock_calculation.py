@@ -87,10 +87,15 @@ FORMAT_RULES = _load_format_rules(FORMAT_RULES_JSON) or {}
 
 
 def _format_extreme_level(value, fmt):
-    if fmt == "ppts_signed" and pd.notna(value) and value > 0:
-        return f"+{value} ppts"
-    if fmt in {"ppts", "ppts_signed"}:
-        return f"{value} ppts"
+    if fmt == "ppts_signed" and pd.notna(value):
+        if value > 0:
+            return f"+{round(value, 1)} ppts"
+        return f"{round(value, 1)} ppts"
+    if fmt == "ppts_signed2" and pd.notna(value):
+        rounded = round(value)
+        if rounded > 0:
+            return f"+{rounded} ppts"
+        return f"{rounded} ppts"
     if fmt == "percent" and pd.notna(value):
         return f"{round(value * 100, 1)} %"
     if fmt == "percent_compact" and pd.notna(value):
@@ -152,7 +157,7 @@ def _apply_format_rules(df):
                 df.loc[mask, "shock"] = shock_vals.map(
                     lambda v: f"{round(v, 1)}%" if pd.notna(v) else v
                 )
-            elif shock_format in {"ppts", "ppts_signed", "bps", "bps_signed"}:
+            elif shock_format in {"ppts", "ppts_signed", "ppts_signed2", "bps", "bps_signed"}:
                 df.loc[mask, "shock"] = shock_vals.map(
                     lambda v: _format_extreme_level(v, shock_format)
                 )
