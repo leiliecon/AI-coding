@@ -227,11 +227,15 @@ def export_path2shock_table(
 
     center_alignment = Alignment(horizontal="center", vertical="center")
     final_font = Font(name="Inter", size=11, color="FF002060")
+    white_font = Font(name="Inter", size=11, color="FFFFFFFF", bold=True)
     for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
         for cell in row:
             if cell.value is not None and str(cell.value).strip() != "":
                 cell.alignment = center_alignment
-                cell.font = final_font
+                if cell.row <= 2:
+                    cell.font = white_font
+                else:
+                    cell.font = final_font
 
     wb.save(output_file)
     return output_file
