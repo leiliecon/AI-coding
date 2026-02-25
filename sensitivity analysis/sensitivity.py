@@ -210,16 +210,26 @@ def apply_shock_adjustments(
         add_arrays: list = []
         target_count = int(target_mask.sum())
         for mnemonic in rule["add_mnemonics"]:
-            src_mask = (
+            # Prefer source rows under the same shock label; if none exist,
+            # fall back to mnemonic-only rows for backward compatibility.
+            src_mask_same_shock = (
                 (res["Shock Change Tested"] == rule["shock_label"])
                 & (res["Mnemonic"] == mnemonic)
             )
-            src_count = int(src_mask.sum())
+            src_count = int(src_mask_same_shock.sum())
+            src_mask = src_mask_same_shock
+            if src_count == 0:
+                src_mask_any_shock = res["Mnemonic"] == mnemonic
+                src_count_any_shock = int(src_mask_any_shock.sum())
+                if src_count_any_shock == target_count:
+                    src_mask = src_mask_any_shock
+                    src_count = src_count_any_shock
             if src_count != target_count:
                 raise ValueError(
                     "Cannot apply 'sum_by_shock_label_and_mnemonic' because row counts differ for "
                     f"shock '{rule['shock_label']}', target '{rule['target_mnemonic']}' ({target_count}) "
-                    f"and source '{mnemonic}' ({src_count})."
+                    f"and source '{mnemonic}' ({src_count}). "
+                    "If source rows are under another shock type, add explicit source mapping."
                 )
             add_arrays.append(res.loc[src_mask, adjustment_cols].to_numpy(dtype=float))
 
