@@ -30,6 +30,41 @@
     "decline_pct_of_t0": {
       "Additional 5 percentage point decline": 0.05,
       "Additional 10 percentage point decline": 0.1
-    }
+    },
+    "pct_of_t0_add_by_mnemonic": [
+      {
+        "shock_label": "Additional 5 percentage point appreciation vs USD",
+        "mnemonics": ["JP.XRT.AQ.LCUSD", "JP.XRT.EQ.LCUSD"],
+        "pct_of_t0_add": -0.05
+      },
+      {
+        "shock_label": "Additional 5 percentage point depreciation vs USD",
+        "mnemonics": [
+          "EX.XRT.AQ.USDLCU",
+          "EX.XRT.EQ.USDLCU",
+          "GB.XRT.EQ.USDLCU",
+          "GB.XRT.AQ.USDLCU"
+        ],
+        "pct_of_t0_add": -0.05
+      },
+      {
+        "shock_label": "Additional 5 percentage point depreciation vs USD",
+        "mnemonics": [
+          "AU.XRT.AQ.LCUSD",
+          "AU.XRT.EQ.LCUSD",
+          "CA.XRT.AQ.LCUSD",
+          "CA.XRT.EQ.LCUSD",
+          "EZ.XRT.AQ.LCUSD",
+          "GB.XRT.AQ.LCUSD",
+          "GB.XRT.EQ.LCUSD"
+        ],
+        "pct_of_t0_add": 0.05
+      },
+      {
+        "shock_label": "Additional 5 percentage point appreciation",
+        "mnemonics": ["US.XRT.AQ.BROAD"],
+        "pct_of_t0_add": 0.05
+      }
+    ]
   }
 }

@@ -29,6 +29,7 @@ python3 sensitivity.py --config your_config.json
   - `points_add`
   - `bps_add`
   - `decline_pct_of_t0`
+  - `pct_of_t0_add_by_mnemonic` (optional rule list for mnemonic-specific percentage adjustments off `t0`)
 
 ## Outputs
 - `output_before`: merged dataset before adjustments.

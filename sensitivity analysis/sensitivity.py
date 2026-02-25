@@ -59,6 +59,37 @@ def load_shock_types(shock_types_path: Path) -> dict:
                 f"'adjustments.{key}' must map string labels to numeric values."
             )
 
+    fx_pct_rules = adjustments.get("pct_of_t0_add_by_mnemonic", [])
+    if not isinstance(fx_pct_rules, list):
+        raise TypeError("'adjustments.pct_of_t0_add_by_mnemonic' must be a list.")
+    for idx, rule in enumerate(fx_pct_rules):
+        if not isinstance(rule, dict):
+            raise TypeError(
+                f"'adjustments.pct_of_t0_add_by_mnemonic[{idx}]' must be an object."
+            )
+        required_rule_keys = {"shock_label", "mnemonics", "pct_of_t0_add"}
+        missing = required_rule_keys - set(rule.keys())
+        if missing:
+            raise KeyError(
+                "Missing keys in "
+                f"'adjustments.pct_of_t0_add_by_mnemonic[{idx}]': {sorted(missing)}"
+            )
+        if not isinstance(rule["shock_label"], str):
+            raise TypeError(
+                f"'adjustments.pct_of_t0_add_by_mnemonic[{idx}].shock_label' must be a string."
+            )
+        mnemonics = rule["mnemonics"]
+        if not isinstance(mnemonics, list) or not all(
+            isinstance(m, str) for m in mnemonics
+        ):
+            raise TypeError(
+                f"'adjustments.pct_of_t0_add_by_mnemonic[{idx}].mnemonics' must be a list of strings."
+            )
+        if not isinstance(rule["pct_of_t0_add"], (int, float)):
+            raise TypeError(
+                f"'adjustments.pct_of_t0_add_by_mnemonic[{idx}].pct_of_t0_add' must be numeric."
+            )
+
     return payload
 
 
@@ -116,6 +147,20 @@ def apply_shock_adjustments(
             )
             res.loc[mask, adjustment_cols] = adjusted
 
+    fx_pct_rules = adjustment_rules.get("pct_of_t0_add_by_mnemonic", [])
+    for rule in fx_pct_rules:
+        mask = (
+            (res["Shock Change Tested"] == rule["shock_label"])
+            & (res["Mnemonic"].isin(rule["mnemonics"]))
+        )
+        if mask.any():
+            base = res.loc[mask, t0].to_numpy(dtype=float)
+            adjusted = (
+                res.loc[mask, adjustment_cols].to_numpy(dtype=float)
+                + base[:, None] * float(rule["pct_of_t0_add"])
+            )
+            res.loc[mask, adjustment_cols] = adjusted
+
     mask_ag = res["Mnemonic"] == "US.RFRRT.AQ.1M"
     mask_eq = res["Mnemonic"] == "US.RFRRT.EQ.1M"
     mask_aqr = res["Mnemonic"] == "US.SOVRT.AQ.1M"
@@ -131,57 +176,6 @@ def apply_shock_adjustments(
         res.loc[mask_eqr, adjustment_cols].values
         + res.loc[mask_sp, adjustment_cols].values
     )
-
-    mask = (
-        (res["Shock Change Tested"] == "Additional 5 percentage point appreciation vs USD")
-        & (res["Mnemonic"].isin(["JP.XRT.AQ.LCUSD", "JP.XRT.EQ.LCUSD"]))
-    )
-    if mask.any():
-        base = res.loc[mask, t0].to_numpy(dtype=float)
-        adjusted = res.loc[mask, adjustment_cols].to_numpy(dtype=float) - base[:, None] * 0.05
-        res.loc[mask, adjustment_cols] = adjusted
-
-    fx_usdlcu = [
-        "EX.XRT.AQ.USDLCU",
-        "EX.XRT.EQ.USDLCU",
-        "GB.XRT.EQ.USDLCU",
-        "GB.XRT.AQ.USDLCU",
-    ]
-    mask = (
-        (res["Shock Change Tested"] == "Additional 5 percentage point depreciation vs USD")
-        & (res["Mnemonic"].isin(fx_usdlcu))
-    )
-    if mask.any():
-        base = res.loc[mask, t0].to_numpy(dtype=float)
-        adjusted = res.loc[mask, adjustment_cols].to_numpy(dtype=float) - base[:, None] * 0.05
-        res.loc[mask, adjustment_cols] = adjusted
-
-    fx_rest = [
-        "AU.XRT.AQ.LCUSD",
-        "AU.XRT.EQ.LCUSD",
-        "CA.XRT.AQ.LCUSD",
-        "CA.XRT.EQ.LCUSD",
-        "EZ.XRT.AQ.LCUSD",
-        "GB.XRT.AQ.LCUSD",
-        "GB.XRT.EQ.LCUSD",
-    ]
-    mask = (
-        (res["Shock Change Tested"] == "Additional 5 percentage point depreciation vs USD")
-        & (res["Mnemonic"].isin(fx_rest))
-    )
-    if mask.any():
-        base = res.loc[mask, t0].to_numpy(dtype=float)
-        adjusted = res.loc[mask, adjustment_cols].to_numpy(dtype=float) + base[:, None] * 0.05
-        res.loc[mask, adjustment_cols] = adjusted
-
-    mask = (
-        (res["Shock Change Tested"] == "Additional 5 percentage point appreciation")
-        & (res["Mnemonic"] == "US.XRT.AQ.BROAD")
-    )
-    if mask.any():
-        base = res.loc[mask, t0].to_numpy(dtype=float)
-        adjusted = res.loc[mask, adjustment_cols].to_numpy(dtype=float) + base[:, None] * 0.05
-        res.loc[mask, adjustment_cols] = adjusted
 
     return res
 
