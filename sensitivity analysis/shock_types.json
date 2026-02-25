@@ -8,6 +8,7 @@
     "+100 bps",
     "+150 bps",
     "+2 percentage points",
+    "SOFR Spread + 1M Treasury Rate",
     "Additional 5 percentage point decline",
     "Additional 10 percentage point decline",
     "Additional 5 percentage point appreciation vs USD",
@@ -40,8 +41,8 @@
       {
         "shock_label": "Additional 5 percentage point depreciation vs USD",
         "mnemonics": [
-          "EX.XRT.AQ.USDLCU",
-          "EX.XRT.EQ.USDLCU",
+          "EZ.XRT.AQ.USDLCU",
+          "EZ.XRT.EQ.USDLCU",
           "GB.XRT.EQ.USDLCU",
           "GB.XRT.AQ.USDLCU"
         ],
@@ -50,12 +51,12 @@
       {
         "shock_label": "Additional 5 percentage point depreciation vs USD",
         "mnemonics": [
-          "AU.XRT.AQ.LCUSD",
-          "AU.XRT.EQ.LCUSD",
-          "CA.XRT.AQ.LCUSD",
-          "CA.XRT.EQ.LCUSD",
-          "EZ.XRT.AQ.LCUSD",
-          "GB.XRT.AQ.LCUSD",
+          "AU.XRT.AQ.LCUUSD",
+          "AU.XRT.EQ.LCUUSD",
+          "CA.XRT.AQ.LCUUSD",
+          "CA.XRT.EQ.LCUUSD",
+          "EZ.XRT.AQ.LCUUSD",
+          "GB.XRT.AQ.LCUUSD",
           "GB.XRT.EQ.LCUSD"
         ],
         "pct_of_t0_add": 0.05
@@ -64,6 +65,18 @@
         "shock_label": "Additional 5 percentage point appreciation",
         "mnemonics": ["US.XRT.AQ.BROAD"],
         "pct_of_t0_add": 0.05
+      }
+    ],
+    "sum_by_shock_label_and_mnemonic": [
+      {
+        "shock_label": "SOFR Spread + 1M Treasury Rate",
+        "target_mnemonic": "US.RFRRT.AQ.1M",
+        "add_mnemonics": ["US.SOVRT.AQ.1M", "US.RFRSP.AQ.1M1M"]
+      },
+      {
+        "shock_label": "SOFR Spread + 1M Treasury Rate",
+        "target_mnemonic": "US.RFRRT.EQ.1M",
+        "add_mnemonics": ["US.SOVRT.EQ.1M", "US.RFRSP.AQ.1M1M"]
       }
     ]
   }

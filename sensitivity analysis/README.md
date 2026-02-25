@@ -30,6 +30,7 @@ python3 sensitivity.py --config your_config.json
   - `bps_add`
   - `decline_pct_of_t0`
   - `pct_of_t0_add_by_mnemonic` (optional rule list for mnemonic-specific percentage adjustments off `t0`)
+  - `sum_by_shock_label_and_mnemonic` (optional rule list for computed series under a specific `Shock Change Tested` type)
 
 ## Outputs
 - `output_before`: merged dataset before adjustments.

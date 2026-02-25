@@ -90,6 +90,43 @@ def load_shock_types(shock_types_path: Path) -> dict:
                 f"'adjustments.pct_of_t0_add_by_mnemonic[{idx}].pct_of_t0_add' must be numeric."
             )
 
+    sum_rules = adjustments.get("sum_by_shock_label_and_mnemonic", [])
+    if not isinstance(sum_rules, list):
+        raise TypeError(
+            "'adjustments.sum_by_shock_label_and_mnemonic' must be a list."
+        )
+    for idx, rule in enumerate(sum_rules):
+        if not isinstance(rule, dict):
+            raise TypeError(
+                f"'adjustments.sum_by_shock_label_and_mnemonic[{idx}]' must be an object."
+            )
+        required_rule_keys = {"shock_label", "target_mnemonic", "add_mnemonics"}
+        missing = required_rule_keys - set(rule.keys())
+        if missing:
+            raise KeyError(
+                "Missing keys in "
+                f"'adjustments.sum_by_shock_label_and_mnemonic[{idx}]': {sorted(missing)}"
+            )
+        if not isinstance(rule["shock_label"], str):
+            raise TypeError(
+                f"'adjustments.sum_by_shock_label_and_mnemonic[{idx}].shock_label' must be a string."
+            )
+        if not isinstance(rule["target_mnemonic"], str):
+            raise TypeError(
+                f"'adjustments.sum_by_shock_label_and_mnemonic[{idx}].target_mnemonic' must be a string."
+            )
+        add_mnemonics = rule["add_mnemonics"]
+        if not isinstance(add_mnemonics, list) or not all(
+            isinstance(m, str) for m in add_mnemonics
+        ):
+            raise TypeError(
+                f"'adjustments.sum_by_shock_label_and_mnemonic[{idx}].add_mnemonics' must be a list of strings."
+            )
+        if len(add_mnemonics) < 2:
+            raise ValueError(
+                f"'adjustments.sum_by_shock_label_and_mnemonic[{idx}].add_mnemonics' must contain at least two mnemonics."
+            )
+
     return payload
 
 
@@ -161,21 +198,35 @@ def apply_shock_adjustments(
             )
             res.loc[mask, adjustment_cols] = adjusted
 
-    mask_ag = res["Mnemonic"] == "US.RFRRT.AQ.1M"
-    mask_eq = res["Mnemonic"] == "US.RFRRT.EQ.1M"
-    mask_aqr = res["Mnemonic"] == "US.SOVRT.AQ.1M"
-    mask_eqr = res["Mnemonic"] == "US.SOVRT.EQ.1M"
-    mask_sp = res["Mnemonic"] == "US.RFRSP.AQ.1M1M"
+    sum_rules = adjustment_rules.get("sum_by_shock_label_and_mnemonic", [])
+    for rule in sum_rules:
+        target_mask = (
+            (res["Shock Change Tested"] == rule["shock_label"])
+            & (res["Mnemonic"] == rule["target_mnemonic"])
+        )
+        if not target_mask.any():
+            continue
 
-    res.loc[mask_ag, adjustment_cols] = (
-        res.loc[mask_aqr, adjustment_cols].values
-        + res.loc[mask_sp, adjustment_cols].values
-    )
+        add_arrays: list = []
+        target_count = int(target_mask.sum())
+        for mnemonic in rule["add_mnemonics"]:
+            src_mask = (
+                (res["Shock Change Tested"] == rule["shock_label"])
+                & (res["Mnemonic"] == mnemonic)
+            )
+            src_count = int(src_mask.sum())
+            if src_count != target_count:
+                raise ValueError(
+                    "Cannot apply 'sum_by_shock_label_and_mnemonic' because row counts differ for "
+                    f"shock '{rule['shock_label']}', target '{rule['target_mnemonic']}' ({target_count}) "
+                    f"and source '{mnemonic}' ({src_count})."
+                )
+            add_arrays.append(res.loc[src_mask, adjustment_cols].to_numpy(dtype=float))
 
-    res.loc[mask_eq, adjustment_cols] = (
-        res.loc[mask_eqr, adjustment_cols].values
-        + res.loc[mask_sp, adjustment_cols].values
-    )
+        summed = add_arrays[0]
+        for arr in add_arrays[1:]:
+            summed = summed + arr
+        res.loc[target_mask, adjustment_cols] = summed
 
     return res
 
