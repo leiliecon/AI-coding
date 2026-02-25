@@ -1,0 +1,35 @@
+{
+  "shock_change_tested": [
+    "+3 pts",
+    "+10 pts",
+    "+13 pts",
+    "-10 bps",
+    "+50 bps",
+    "+100 bps",
+    "+150 bps",
+    "+2 percentage points",
+    "Additional 5 percentage point decline",
+    "Additional 10 percentage point decline",
+    "Additional 5 percentage point appreciation vs USD",
+    "Additional 5 percentage point depreciation vs USD",
+    "Additional 5 percentage point appreciation"
+  ],
+  "adjustments": {
+    "points_add": {
+      "+3 pts": 3.0,
+      "+10 pts": 10.0,
+      "+13 pts": 13.0,
+      "+2 percentage points": 2.0
+    },
+    "bps_add": {
+      "-10 bps": -0.1,
+      "+50 bps": 0.5,
+      "+100 bps": 1.0,
+      "+150 bps": 1.5
+    },
+    "decline_pct_of_t0": {
+      "Additional 5 percentage point decline": 0.05,
+      "Additional 10 percentage point decline": 0.1
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "sfp_data_file": "SFP files/CCAR2026_GCM_202602121105.xlsx",
+  "shock_file": "CCAR 2026 - BHC Stress - Sensitivity Analysis Factors_Updated.xlsx",
+  "shock_types_file": "shock_types.json",
+  "data_sheet": "Quarterly",
+  "shock_sheet": "CCAR 2026 SAAN",
+  "t0": "2025.4",
+  "start_date": "2026.1",
+  "end_date": "2028.1",
+  "output_before": "Extra_shock_before.xlsx",
+  "output_after": "Extra_shock_after.xlsx"
+}
