@@ -242,14 +242,14 @@ def apply_shock_adjustments(
 
 
 def run(config_path: Path) -> None:
-    base_path = Path(__file__).resolve().parent
     config = load_config(config_path)
+    config_base = config_path.resolve().parent
 
-    sfp_data_path = base_path / config["sfp_data_file"]
-    shock_path = base_path / config["shock_file"]
-    shock_types_path = base_path / config["shock_types_file"]
-    output_before_path = base_path / config["output_before"]
-    output_after_path = base_path / config["output_after"]
+    sfp_data_path = config_base / config["sfp_data_file"]
+    shock_path = config_base / config["shock_file"]
+    shock_types_path = config_base / config["shock_types_file"]
+    output_before_path = config_base / config["output_before"]
+    output_after_path = config_base / config["output_after"]
 
     if not sfp_data_path.exists():
         raise FileNotFoundError(f"SFP data file not found: {sfp_data_path}")
@@ -283,6 +283,7 @@ def run(config_path: Path) -> None:
 
     cols = list(res.columns)
     res = res.loc[:, cols[:2] + [cols[-1]] + cols[2:-1]]
+    output_before_path.parent.mkdir(parents=True, exist_ok=True)
     res.to_excel(output_before_path, index=False)
 
     grouped = res.groupby("Shock Change Tested").size()
@@ -304,6 +305,7 @@ def run(config_path: Path) -> None:
     res = apply_shock_adjustments(
         res, adjustment_cols, config["t0"], shock_types_payload["adjustments"]
     )
+    output_after_path.parent.mkdir(parents=True, exist_ok=True)
     res.to_excel(output_after_path, index=False)
 
 
@@ -311,7 +313,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run sensitivity analysis adjustments.")
     parser.add_argument(
         "--config",
-        default="sensitivity_config.json",
+        default="input/sensitivity_config.json",
         help="Path to JSON config file (relative to this script directory if not absolute).",
     )
     args = parser.parse_args()

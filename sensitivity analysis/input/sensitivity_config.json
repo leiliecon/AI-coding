@@ -1,7 +1,7 @@
 {
   "sfp_data_file": "CCAR2026_GCM_202602121105.xlsx",
-  "shock_file": "xxx_input.xlsx",
   "data_sheet": "Quarterly",
+  "shock_file": "xxx_input.xlsx",
   "shock_sheet": "CCAR 2026 SAAM",
   "template_after_sheet": "Sensitivity",
   "t0": "2025.4",
