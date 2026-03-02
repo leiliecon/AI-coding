@@ -35,7 +35,7 @@
     "pct_of_t0_add_by_mnemonic": [
       {
         "shock_label": "Additional 5 percentage point appreciation vs USD",
-        "mnemonics": ["JP.XRT.AQ.LCUSD", "JP.XRT.EQ.LCUSD"],
+        "mnemonics": ["JP.XRT.AQ.LCUUSD", "JP.XRT.EQ.LCUUSD"],
         "pct_of_t0_add": -0.05
       },
       {
@@ -57,7 +57,7 @@
           "CA.XRT.EQ.LCUUSD",
           "EZ.XRT.AQ.LCUUSD",
           "GB.XRT.AQ.LCUUSD",
-          "GB.XRT.EQ.LCUSD"
+          "GB.XRT.EQ.LCUUSD"
         ],
         "pct_of_t0_add": 0.05
       },

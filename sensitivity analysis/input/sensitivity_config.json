@@ -1,0 +1,13 @@
+{
+  "sfp_data_file": "CCAR2026_GCM_202602121105.xlsx",
+  "shock_file": "xxx_input.xlsx",
+  "data_sheet": "Quarterly",
+  "shock_sheet": "CCAR 2026 SAAM",
+  "template_after_sheet": "Sensitivity",
+  "t0": "2025.4",
+  "start_date": "2026.1",
+  "end_date": "2028.1",
+    "shock_types_file": "shock_types.json",
+  "output_before": "../output/Extra_shock_before.xlsx",
+  "output_after": "../output/Extra_shock_after.xlsx"
+}
