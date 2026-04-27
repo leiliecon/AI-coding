@@ -1,37 +1,57 @@
 {
   "format_rules": {
     "M1": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "*"
     },
     "M2": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "+"
     },
     "M3": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "+"
     },
     "M4": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "#"
     },
     "M5": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "#"
     },
     "M6": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "*"
     },
     "M7": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "*"
     },
     "M8": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "*"
     },
     "M9": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "*"
     },
     "M10": {
       "shock_format": "percent"
     },
     "M24": {
-      "shock_format": "percent"
+      "shock_format": "percent",
+      "shock_format_baseline": "percent_compact",
+      "shock_suffix_baseline": "*"
     },
     "M11": {
       "shock_format": "ppts_signed",

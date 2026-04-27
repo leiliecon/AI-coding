@@ -123,7 +123,7 @@ def ensure_period_headers(ws, period_cols: list[str]) -> dict[str, int]:
     return hm
 
 
-def select_record(candidates: list[dict], shock_change_tested: str) -> dict | None:
+def select_record(candidates: list[dict], shock_change_tested: str) -> Optional[dict]:
     if not candidates:
         return None
     if len(candidates) == 1 or not shock_change_tested:

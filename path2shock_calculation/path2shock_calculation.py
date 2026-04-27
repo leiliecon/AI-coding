@@ -5,7 +5,6 @@
 
 import json
 import os
-import warnings
 import pandas as pd
 
 # ------------------ Paths ------------------
@@ -32,6 +31,7 @@ REQUIRED_CONFIG_KEYS = {
     "mapping_sheet_name",
     "data_sheet_name",
     "group_rates_up_scenarios",
+    "group_baseline_scenarios",
     "T0",
     "scen_start",
     "scen_end",
@@ -47,6 +47,7 @@ DATA_EXCEL = CONFIG["data_excel"]
 MAPPING_SHEET_NAME = CONFIG["mapping_sheet_name"]
 DATA_SHEET_NAME = CONFIG["data_sheet_name"]
 UP_SCENARIOS = set(CONFIG["group_rates_up_scenarios"])
+BASELINE_UP_SCENARIOS = set(CONFIG["group_baseline_scenarios"])
 T0 = CONFIG["T0"]
 SCEN_START = CONFIG["scen_start"]
 SCEN_END = CONFIG["scen_end"]
@@ -79,11 +80,32 @@ def _validate_groups(groups):
 GROUPS = _load_groups(GROUPS_JSON)
 _validate_groups(GROUPS)
 GROUP_MIN_PERCENT = GROUPS.get("group_min_percent", set())
+GROUP_MIN_EQT = GROUPS.get("group_min_eqt", set())
+GROUP_MIN_HPI_CRE = GROUPS.get("group_min_hpi_cre", set())
+GROUP_MIN_GDP_FX = GROUPS.get("group_min_gdp-fx", set())
 GROUP_MAX_PERCENT = GROUPS.get("group_max_percent", set())
 GROUP_MAX_CHANGE = GROUPS.get("group_max_change", set())
 GROUP_CPI = GROUPS.get("group_cpi", set())
 GROUP_RATES = GROUPS.get("group_rates", set())
 FORMAT_RULES = _load_format_rules(FORMAT_RULES_JSON) or {}
+GROUP_MIN_PERCENT_ALL = (
+    GROUP_MIN_PERCENT
+    | GROUP_MIN_EQT
+    | GROUP_MIN_HPI_CRE
+    | GROUP_MIN_GDP_FX
+)
+
+
+def _extract_year(period_label):
+    return int(str(period_label).split(".")[0])
+
+
+def _get_q4_label(year):
+    return f"{year}.4"
+
+
+def _to_float_or_na(value):
+    return pd.to_numeric(value, errors="coerce")
 
 
 def _format_extreme_level(value, fmt):
@@ -115,9 +137,51 @@ def _format_extreme_level(value, fmt):
 
 
 def _apply_group_min_percent(df, range_columns):
-    condition = df["M names"].isin(GROUP_MIN_PERCENT)
+    baseline_condition = df["Scenario"].isin(BASELINE_UP_SCENARIOS)
+    condition = df["M names"].isin(GROUP_MIN_PERCENT_ALL) & ~baseline_condition
     shock_pct = range_columns.loc[condition].min(axis=1) / df.loc[condition, T0] - 1
     df.loc[condition, "shock"] = shock_pct
+
+
+
+def _apply_group_baseline_up(df, range_columns):
+    if not BASELINE_UP_SCENARIOS:
+        return
+
+    first_forecast_year = _extract_year(SCEN_START)
+    second_forecast_year = first_forecast_year + 1
+    last_history_year = first_forecast_year - 1
+
+    first_forecast_year_q4 = _get_q4_label(first_forecast_year)
+    second_forecast_year_q4 = _get_q4_label(second_forecast_year)
+    last_history_year_q4 = _get_q4_label(last_history_year)
+
+    baseline_condition = df["Scenario"].isin(BASELINE_UP_SCENARIOS)
+
+    first_year_condition = df["M names"].isin(GROUP_MIN_EQT) & baseline_condition
+    df.loc[first_year_condition, "shock"] = (
+        df.loc[first_year_condition, first_forecast_year_q4]
+        / df.loc[first_year_condition, last_history_year_q4]
+        - 1
+    )
+
+    max_condition = df["M names"].isin(GROUP_MIN_HPI_CRE) & baseline_condition
+    df.loc[max_condition, "shock"] = (
+        range_columns.loc[max_condition].max(axis=1) / df.loc[max_condition, T0] - 1
+    )
+
+    average_condition = df["M names"].isin(GROUP_MIN_GDP_FX) & baseline_condition
+    first_leg = (
+        df.loc[average_condition, first_forecast_year_q4]
+        / df.loc[average_condition, last_history_year_q4]
+        - 1
+    )
+    second_leg = (
+        df.loc[average_condition, second_forecast_year_q4]
+        / df.loc[average_condition, first_forecast_year_q4]
+        - 1
+    )
+    df.loc[average_condition, "shock"] = (first_leg + second_leg) / 2
 
 
 def _apply_group_max_percent(df, range_columns):
@@ -147,15 +211,27 @@ def _apply_format_rules(df):
             shock_vals = df.loc[mask, "shock"]
             if shock_format == "percent":
                 df.loc[mask, "shock"] = shock_vals.map(
-                    lambda v: f"{round(v * 100, 1)} %" if pd.notna(v) else v
+                    lambda v: (
+                        f"{round(float(_to_float_or_na(v)) * 100, 1)} %"
+                        if pd.notna(_to_float_or_na(v))
+                        else v
+                    )
                 )
             elif shock_format == "percent_compact":
                 df.loc[mask, "shock"] = shock_vals.map(
-                    lambda v: f"{round(v * 100, 1)}%" if pd.notna(v) else v
+                    lambda v: (
+                        f"{round(float(_to_float_or_na(v)) * 100, 1)}%"
+                        if pd.notna(_to_float_or_na(v))
+                        else v
+                    )
                 )
             elif shock_format == "percent_compact_raw":
                 df.loc[mask, "shock"] = shock_vals.map(
-                    lambda v: f"{round(v, 1)}%" if pd.notna(v) else v
+                    lambda v: (
+                        f"{round(float(_to_float_or_na(v)), 1)}%"
+                        if pd.notna(_to_float_or_na(v))
+                        else v
+                    )
                 )
             elif shock_format in {"ppts", "ppts_signed", "ppts_signed2", "bps", "bps_signed"}:
                 df.loc[mask, "shock"] = shock_vals.map(
@@ -195,6 +271,12 @@ def _apply_format_rules(df):
         extreme_suffix_other = rule.get("extreme_suffix_other")
         extreme_wrap_up = rule.get("extreme_wrap_up")
         extreme_wrap_other = rule.get("extreme_wrap_other")
+        shock_format_baseline = rule.get("shock_format_baseline")
+        shock_suffix_baseline = rule.get("shock_suffix_baseline")
+        shock_wrap_baseline = rule.get("shock_wrap_baseline")
+        extreme_format_baseline = rule.get("extreme_format_baseline")
+        extreme_suffix_baseline = rule.get("extreme_suffix_baseline")
+        extreme_wrap_baseline = rule.get("extreme_wrap_baseline")
 
         if any(
             [
@@ -238,6 +320,32 @@ def _apply_format_rules(df):
             )
             continue
 
+        if any(
+            [
+                shock_format_baseline,
+                shock_suffix_baseline,
+                shock_wrap_baseline,
+                extreme_format_baseline,
+                extreme_suffix_baseline,
+                extreme_wrap_baseline,
+            ]
+        ):
+            baseline_mask = m_condition & df["Scenario"].isin(BASELINE_UP_SCENARIOS)
+            non_baseline_mask = m_condition & ~df["Scenario"].isin(BASELINE_UP_SCENARIOS)
+            _apply_rule(
+                baseline_mask,
+                {
+                    "shock_format": shock_format_baseline,
+                    "shock_suffix": shock_suffix_baseline,
+                    "shock_wrap": shock_wrap_baseline,
+                    "extreme_format": extreme_format_baseline,
+                    "extreme_suffix": extreme_suffix_baseline,
+                    "extreme_wrap": extreme_wrap_baseline,
+                },
+            )
+            _apply_rule(non_baseline_mask, rule)
+            continue
+
         if not rule:
             continue
         _apply_rule(m_condition, rule)
@@ -272,6 +380,7 @@ def _apply_group_rates(df, range_columns):
 
 def calculate_shocks(df, range_columns):
     _apply_group_min_percent(df, range_columns)
+    _apply_group_baseline_up(df, range_columns)
     _apply_group_max_percent(df, range_columns)
     _apply_group_max_change(df, range_columns)
     _apply_group_cpi(df)
@@ -314,14 +423,22 @@ def _validate_data(df, range_columns):
             f"Scenario range columns not found: {SCEN_START} to {SCEN_END}"
         )
 
-    data_names = set(df["M names"].dropna().unique())
-    group_names = set().union(
-        GROUP_MIN_PERCENT,
-        GROUP_MAX_PERCENT,
-        GROUP_MAX_CHANGE,
-        GROUP_CPI,
-        GROUP_RATES,
-    )
+    if BASELINE_UP_SCENARIOS and (
+        GROUP_MIN_EQT or GROUP_MIN_HPI_CRE or GROUP_MIN_GDP_FX
+    ):
+        first_forecast_year = _extract_year(SCEN_START)
+        required_baseline_cols = {
+            _get_q4_label(first_forecast_year - 1),
+            _get_q4_label(first_forecast_year),
+            _get_q4_label(first_forecast_year + 1),
+        }
+        missing_baseline_cols = required_baseline_cols - set(df.columns)
+        if missing_baseline_cols:
+            missing_str = ", ".join(sorted(missing_baseline_cols))
+            raise ValueError(
+                "Missing required baseline scenario columns: "
+                f"{missing_str}"
+            )
     # Note: missing/extra group assignments are allowed without warnings.
 
 

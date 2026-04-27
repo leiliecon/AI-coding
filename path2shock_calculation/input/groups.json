@@ -1,5 +1,7 @@
 {
-  "group_min_percent": ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M24"],
+  "group_min_eqt": ["M2", "M3"],
+  "group_min_hpi_cre": ["M4", "M5"],
+  "group_min_gdp-fx": ["M1", "M7", "M8", "M6", "M9", "M24"],
   "group_max_percent": ["M10"],
   "group_max_change": ["M11", "M12", "M13",  "M14"],
   "group_cpi": ["M20"],
